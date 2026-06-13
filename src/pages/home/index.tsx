@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { todayTasks, workOrders, currentUser } from '../../data/mockData';
+import { workOrders } from '../../data/mockData';
+import { useAppState } from '../../store/AppContext';
 import { InspectionTask } from '../../types';
 
 const HomePage: React.FC = () => {
-  const [tasks] = useState<InspectionTask[]>(todayTasks);
-  const user = currentUser;
+  const { todayTasks, getUnreadMessageCount } = useAppState();
 
-  const pendingTasks = tasks.filter(t => t.status === 'pending' || t.status === 'overdue');
-  const completedTasks = tasks.filter(t => t.status === 'completed');
-  const overdueTasks = tasks.filter(t => t.status === 'overdue');
+  const pendingTasks = todayTasks.filter(t => t.status === 'pending' || t.status === 'overdue');
+  const completedTasks = todayTasks.filter(t => t.status === 'completed');
+  const overdueTasks = todayTasks.filter(t => t.status === 'overdue');
   const pendingWorkOrders = workOrders.filter(w => w.status === 'pending' || w.status === 'assigned' || w.status === 'processing').length;
+  const unreadMessages = getUnreadMessageCount();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -85,7 +86,7 @@ const HomePage: React.FC = () => {
   return (
     <ScrollView className={styles.container} scrollY enablePullDownRefresh>
       <View className={styles.header}>
-        <Text className={styles.greeting}>{getGreeting()}，{user.name}</Text>
+        <Text className={styles.greeting}>{getGreeting()}，李师傅</Text>
         <Text className={styles.date}>{getDate()}</Text>
       </View>
 
@@ -157,12 +158,12 @@ const HomePage: React.FC = () => {
 
       <View className={styles.section}>
         <View className={styles.sectionHeader}>
-          <Text className={styles.sectionTitle}>今日任务（{tasks.length}）</Text>
+          <Text className={styles.sectionTitle}>今日任务（{todayTasks.length}）</Text>
           <Button className={styles.moreBtn}>查看全部</Button>
         </View>
 
         <View className={styles.taskList}>
-          {tasks.map((task) => (
+          {todayTasks.map((task) => (
             <View key={task.id} className={styles.taskCard}>
               <View className={styles.taskHeader}>
                 <View className={styles.deviceInfo}>

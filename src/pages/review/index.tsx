@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { inspectionStore } from '../../store/inspectionStore';
-import { InspectionRecord } from '../../types';
+import { useAppState } from '../../store/AppContext';
 
 const ReviewPage: React.FC = () => {
-  const [records, setRecords] = useState<InspectionRecord[]>(inspectionStore.getPendingReviewRecords());
+  const { inspectionRecords, updateRecordStatus } = useAppState();
+  const pendingRecords = inspectionRecords.filter(r => r.status === 'submitted');
 
-  const handleApprove = (record: InspectionRecord) => {
+  const handleApprove = (record: any) => {
     Taro.showModal({
       title: '确认复核',
       content: '确认通过此巡检记录？',
       success: (res) => {
         if (res.confirm) {
-          inspectionStore.updateRecord(record.id, { status: 'reviewed' });
-          setRecords(inspectionStore.getPendingReviewRecords());
+          updateRecordStatus(record.id, 'reviewed', '复核通过，数据完整准确');
           Taro.showToast({
             title: '已通过',
             icon: 'success'
@@ -25,14 +24,15 @@ const ReviewPage: React.FC = () => {
     });
   };
 
-  const handleReject = (record: InspectionRecord) => {
+  const handleReject = (record: any) => {
     Taro.showModal({
-      title: '驳回确认',
-      content: '确认驳回此巡检记录？',
+      title: '驳回原因',
+      content: '请明确指出需要修改的问题',
+      editable: true,
+      placeholderText: '请输入驳回原因...',
       success: (res) => {
-        if (res.confirm) {
-          inspectionStore.updateRecord(record.id, { status: 'rejected' });
-          setRecords(inspectionStore.getPendingReviewRecords());
+        if (res.confirm && res.content) {
+          updateRecordStatus(record.id, 'rejected', res.content);
           Taro.showToast({
             title: '已驳回',
             icon: 'none'
@@ -45,8 +45,8 @@ const ReviewPage: React.FC = () => {
   return (
     <View className={styles.container}>
       <ScrollView className={styles.recordList} scrollY>
-        {records.length > 0 ? (
-          records.map((record) => (
+        {pendingRecords.length > 0 ? (
+          pendingRecords.map((record) => (
             <View key={record.id} className={styles.recordCard}>
               <View className={styles.recordHeader}>
                 <View className={styles.deviceInfo}>

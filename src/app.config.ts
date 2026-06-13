@@ -10,12 +10,14 @@ export default defineAppConfig({
     'pages/partsDetail/index',
     'pages/deviceDetail/index',
     'pages/inspectionRecord/index',
+    'pages/inspectionDetail/index',
     'pages/workorderDetail/index',
     'pages/emergency/index',
     'pages/review/index',
     'pages/feedback/index',
     'pages/statistics/index',
-    'pages/settings/index'
+    'pages/settings/index',
+    'pages/offlineList/index'
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -2,16 +2,18 @@ import React from 'react';
 import { View, Text, ScrollView, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { currentUser, todayTasks, workOrders } from '../../data/mockData';
+import { workOrders } from '../../data/mockData';
+import { useAppState } from '../../store/AppContext';
 
 const ProfilePage: React.FC = () => {
-  const user = currentUser;
+  const { todayTasks, getUnreadMessageCount, getPendingReviewCount } = useAppState();
 
   const pendingTasks = todayTasks.filter(t => t.status === 'pending' || t.status === 'overdue').length;
   const completedTasks = todayTasks.filter(t => t.status === 'completed').length;
   const overdueTasks = todayTasks.filter(t => t.status === 'overdue').length;
-  const unreadMessages = 2;
+  const unreadMessages = getUnreadMessageCount();
   const pendingWorkOrders = workOrders.filter(w => w.status === 'pending' || w.status === 'assigned' || w.status === 'processing').length;
+  const pendingReview = getPendingReviewCount();
 
   const menuItems = [
     {
@@ -19,6 +21,13 @@ const ProfilePage: React.FC = () => {
       title: '巡检记录',
       desc: '查看历史巡检记录',
       url: '/pages/inspectionRecord/index',
+      badge: 0
+    },
+    {
+      icon: '📤',
+      title: '离线暂存',
+      desc: '查看暂存的巡检数据',
+      url: '/pages/offlineList/index',
       badge: 0
     },
     {
@@ -40,7 +49,7 @@ const ProfilePage: React.FC = () => {
       title: '主管复核',
       desc: '复核巡检记录',
       url: '/pages/review/index',
-      badge: user.role === 'supervisor' ? 3 : 0
+      badge: pendingReview
     },
     {
       icon: '💬',
@@ -67,14 +76,12 @@ const ProfilePage: React.FC = () => {
       <View className={styles.profileHeader}>
         <View className={styles.profileInfo}>
           <View className={styles.avatar}>
-            <Image src={user.avatar || 'https://picsum.photos/id/64/200/200'} mode="aspectFill" />
+            <Image src="https://picsum.photos/id/64/200/200" mode="aspectFill" />
           </View>
           <View className={styles.userInfo}>
-            <Text className={styles.userName}>{user.name}</Text>
-            <Text className={styles.userRole}>
-              {user.role === 'repairman' ? '维修师傅' : '片区主管'}
-            </Text>
-            <Text className={styles.userPhone}>{user.phone}</Text>
+            <Text className={styles.userName}>李师傅</Text>
+            <Text className={styles.userRole}>维修师傅</Text>
+            <Text className={styles.userPhone}>139****5678</Text>
           </View>
         </View>
 

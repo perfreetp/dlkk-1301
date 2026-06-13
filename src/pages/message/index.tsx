@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { messages, todayTasks, devices } from '../../data/mockData';
-import { Message, InspectionTask, Device } from '../../types';
+import { useAppState } from '../../store/AppContext';
+import { todayTasks, devices } from '../../data/mockData';
 
 const MessagePage: React.FC = () => {
-  const [messageList] = useState<Message[]>(messages);
+  const { messages, markMessageAsRead } = useAppState();
 
   const getTypeIcon = (type: string) => {
     const icons: Record<string, string> = {
@@ -28,9 +28,9 @@ const MessagePage: React.FC = () => {
     return names[type] || '消息';
   };
 
-  const handleMessageClick = (message: Message) => {
+  const handleMessageClick = (message: any) => {
     if (!message.isRead) {
-      message.isRead = true;
+      markMessageAsRead(message.id);
     }
 
     if (message.type === 'dispatch' && message.relatedId) {
@@ -56,9 +56,10 @@ const MessagePage: React.FC = () => {
         url: '/pages/review/index'
       });
     } else if (message.type === 'system') {
-      Taro.showToast({
+      Taro.showModal({
         title: '系统公告',
-        icon: 'none'
+        content: message.content,
+        showCancel: false
       });
     }
   };
@@ -76,12 +77,18 @@ const MessagePage: React.FC = () => {
     return timeStr;
   };
 
-  const getPreviewText = (message: Message): string => {
+  const getPreviewText = (message: any): string => {
     if (message.type === 'reminder' && message.relatedId) {
       const task = todayTasks.find(t => t.id === message.relatedId);
       if (task) {
         return `设备：${task.deviceName} | 位置：${task.location}`;
       }
+    }
+    if (message.type === 'dispatch' && message.relatedId) {
+      return `点击查看工单详情`;
+    }
+    if (message.type === 'review') {
+      return `点击进入复核页面`;
     }
     return message.content;
   };
@@ -89,8 +96,8 @@ const MessagePage: React.FC = () => {
   return (
     <View className={styles.container}>
       <ScrollView className={styles.messageList} scrollY>
-        {messageList.length > 0 ? (
-          messageList.map((message) => (
+        {messages.length > 0 ? (
+          messages.map((message) => (
             <View
               key={message.id}
               className={`${styles.messageCard} ${!message.isRead ? styles.unread : ''}`}

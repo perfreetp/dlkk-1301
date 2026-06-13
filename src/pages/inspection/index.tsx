@@ -3,20 +3,19 @@ import { View, Text, Input, Textarea, Image } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
 import { devices, todayTasks } from '../../data/mockData';
-import { Device, InspectionTask, InspectionRecord } from '../../types';
-import { inspectionStore } from '../../store/inspectionStore';
+import { useAppState } from '../../store/AppContext';
 
 const InspectionPage: React.FC = () => {
   const router = useRouter();
-  const [device, setDevice] = useState<Device | null>(null);
-  const [task, setTask] = useState<InspectionTask | null>(null);
+  const { saveOfflineInspection, addInspectionRecord } = useAppState();
+  const [device, setDevice] = useState<any>(null);
+  const [task, setTask] = useState<any>(null);
   const [waterPressure, setWaterPressure] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('normal');
   const [disinfectionTime, setDisinfectionTime] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
-  const [isOffline, setIsOffline] = useState<boolean>(false);
 
   useEffect(() => {
     const { deviceId, taskId, code } = router.params;
@@ -132,7 +131,7 @@ const InspectionPage: React.FC = () => {
     setVideos(newVideos);
   };
 
-  const handleSave = () => {
+  const handleSaveOffline = () => {
     if (!waterPressure) {
       Taro.showToast({
         title: '请填写水压数据',
@@ -141,32 +140,25 @@ const InspectionPage: React.FC = () => {
       return;
     }
 
-    Taro.showLoading({ title: '保存中...' });
+    saveOfflineInspection({
+      deviceId: device?.id,
+      taskId: task?.id,
+      waterPressure,
+      filterStatus,
+      disinfectionTime,
+      photos,
+      videos,
+      notes
+    });
+
+    Taro.showToast({
+      title: '已暂存到离线',
+      icon: 'success'
+    });
 
     setTimeout(() => {
-      Taro.hideLoading();
-      Taro.showToast({
-        title: '保存成功',
-        icon: 'success'
-      });
-
-      if (isOffline) {
-        Taro.setStorageSync('offlineInspection', {
-          deviceId: device?.id,
-          waterPressure,
-          filterStatus,
-          disinfectionTime,
-          photos,
-          videos,
-          notes,
-          savedAt: new Date().toISOString()
-        });
-      }
-
-      setTimeout(() => {
-        Taro.navigateBack();
-      }, 1500);
-    }, 1000);
+      Taro.navigateBack();
+    }, 1500);
   };
 
   const handleSubmit = () => {
@@ -185,7 +177,7 @@ const InspectionPage: React.FC = () => {
         if (res.confirm) {
           Taro.showLoading({ title: '提交中...' });
 
-          const newRecord: InspectionRecord = {
+          const newRecord = {
             id: `ir${Date.now()}`,
             deviceId: device?.id || '',
             deviceCode: device?.code || '',
@@ -198,11 +190,12 @@ const InspectionPage: React.FC = () => {
             photos: photos,
             videos: videos,
             notes: notes,
-            status: 'submitted'
+            status: 'submitted',
+            taskId: task?.id
           };
 
           setTimeout(() => {
-            inspectionStore.addRecord(newRecord);
+            addInspectionRecord(newRecord);
 
             Taro.hideLoading();
             Taro.showToast({
@@ -384,9 +377,9 @@ const InspectionPage: React.FC = () => {
       <View className={styles.bottomBar}>
         <View
           className={`${styles.btn} ${styles.secondary}`}
-          onClick={() => setIsOffline(!isOffline)}
+          onClick={handleSaveOffline}
         >
-          {isOffline ? '✓ 离线暂存' : '离线暂存'}
+          离线暂存
         </View>
         <View
           className={`${styles.btn} ${styles.primary}`}

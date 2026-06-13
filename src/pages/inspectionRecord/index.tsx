@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView, Image, Video } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { inspectionStore } from '../../store/inspectionStore';
-import { InspectionRecord } from '../../types';
+import { useAppState } from '../../store/AppContext';
 
 const InspectionRecordPage: React.FC = () => {
-  const [records, setRecords] = useState<InspectionRecord[]>(inspectionStore.getRecords());
+  const { inspectionRecords } = useAppState();
 
   const getStatusText = (status: string) => {
     const map: Record<string, string> = {
@@ -28,12 +27,22 @@ const InspectionRecordPage: React.FC = () => {
     return map[status] || status;
   };
 
+  const handleRecordClick = (recordId: string) => {
+    Taro.navigateTo({
+      url: `/pages/inspectionDetail/index?recordId=${recordId}`
+    });
+  };
+
   return (
     <View className={styles.container}>
       <ScrollView className={styles.recordList} scrollY>
-        {records.length > 0 ? (
-          records.map((record) => (
-            <View key={record.id} className={styles.recordCard}>
+        {inspectionRecords.length > 0 ? (
+          inspectionRecords.map((record) => (
+            <View 
+              key={record.id} 
+              className={styles.recordCard}
+              onClick={() => handleRecordClick(record.id)}
+            >
               <View className={styles.recordHeader}>
                 <View className={styles.deviceInfo}>
                   <Text className={styles.deviceName}>{record.deviceName}</Text>
@@ -104,7 +113,7 @@ const InspectionRecordPage: React.FC = () => {
                 <Text className={styles.meta}>
                   巡检员：{record.inspector} | {record.inspectionTime}
                 </Text>
-                <View className={styles.actionBtn}>查看详情</View>
+                <View className={styles.actionBtn}>查看详情 ›</View>
               </View>
             </View>
           ))
