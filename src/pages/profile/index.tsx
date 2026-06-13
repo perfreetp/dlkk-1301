@@ -1,11 +1,17 @@
 import React from 'react';
-import { View, Text, ScrollView } from '@tarojs/components';
+import { View, Text, ScrollView, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { currentUser } from '../../data/mockData';
+import { currentUser, todayTasks, workOrders } from '../../data/mockData';
 
 const ProfilePage: React.FC = () => {
   const user = currentUser;
+
+  const pendingTasks = todayTasks.filter(t => t.status === 'pending' || t.status === 'overdue').length;
+  const completedTasks = todayTasks.filter(t => t.status === 'completed').length;
+  const overdueTasks = todayTasks.filter(t => t.status === 'overdue').length;
+  const unreadMessages = 2;
+  const pendingWorkOrders = workOrders.filter(w => w.status === 'pending' || w.status === 'assigned' || w.status === 'processing').length;
 
   const menuItems = [
     {
@@ -20,7 +26,7 @@ const ProfilePage: React.FC = () => {
       title: '备件领用',
       desc: '申请和领取备件',
       url: '/pages/parts/index',
-      badge: 2
+      badge: pendingWorkOrders
     },
     {
       icon: '📊',
@@ -61,9 +67,7 @@ const ProfilePage: React.FC = () => {
       <View className={styles.profileHeader}>
         <View className={styles.profileInfo}>
           <View className={styles.avatar}>
-            {user.avatar && (
-              <Image src={user.avatar} mode="aspectFill" />
-            )}
+            <Image src={user.avatar || 'https://picsum.photos/id/64/200/200'} mode="aspectFill" />
           </View>
           <View className={styles.userInfo}>
             <Text className={styles.userName}>{user.name}</Text>
@@ -76,19 +80,19 @@ const ProfilePage: React.FC = () => {
 
         <View className={styles.statsRow}>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{user.todayTasks}</Text>
-            <Text className={styles.statLabel}>今日任务</Text>
+            <Text className={styles.statValue}>{pendingTasks}</Text>
+            <Text className={styles.statLabel}>待巡检</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{user.completedTasks}</Text>
+            <Text className={styles.statValue}>{completedTasks}</Text>
             <Text className={styles.statLabel}>已完成</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{user.overdueTasks}</Text>
+            <Text className={styles.statValue}>{overdueTasks}</Text>
             <Text className={styles.statLabel}>超时</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{user.unreadMessages}</Text>
+            <Text className={styles.statValue}>{unreadMessages}</Text>
             <Text className={styles.statLabel}>未读消息</Text>
           </View>
         </View>

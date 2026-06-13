@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { messages } from '../../data/mockData';
-import { Message } from '../../types';
+import { messages, todayTasks, devices } from '../../data/mockData';
+import { Message, InspectionTask, Device } from '../../types';
 
 const MessagePage: React.FC = () => {
   const [messageList] = useState<Message[]>(messages);
@@ -21,7 +21,7 @@ const MessagePage: React.FC = () => {
   const getTypeName = (type: string) => {
     const names: Record<string, string> = {
       dispatch: '派单通知',
-      reminder: '提醒',
+      reminder: '超时提醒',
       review: '复核通知',
       system: '系统消息'
     };
@@ -33,17 +33,32 @@ const MessagePage: React.FC = () => {
       message.isRead = true;
     }
 
-    if (message.relatedType === 'workorder' && message.relatedId) {
+    if (message.type === 'dispatch' && message.relatedId) {
       Taro.navigateTo({
         url: `/pages/workorderDetail/index?orderId=${message.relatedId}`
       });
-    } else if (message.relatedType === 'inspection' && message.relatedId) {
-      Taro.navigateTo({
-        url: `/pages/inspectionRecord/index?taskId=${message.relatedId}`
-      });
-    } else if (message.relatedId === 'review') {
+    } else if (message.type === 'reminder' && message.relatedId) {
+      const task = todayTasks.find(t => t.id === message.relatedId);
+      if (task) {
+        Taro.navigateTo({
+          url: `/pages/inspection/index?taskId=${task.id}&deviceId=${task.deviceId}`
+        });
+      } else {
+        const device = devices.find(d => d.id === message.relatedId);
+        if (device) {
+          Taro.navigateTo({
+            url: `/pages/deviceDetail/index?deviceId=${device.id}`
+          });
+        }
+      }
+    } else if (message.type === 'review') {
       Taro.navigateTo({
         url: '/pages/review/index'
+      });
+    } else if (message.type === 'system') {
+      Taro.showToast({
+        title: '系统公告',
+        icon: 'none'
       });
     }
   };
@@ -59,6 +74,16 @@ const MessagePage: React.FC = () => {
     if (diffHours < 24) return `${diffHours}小时前`;
     if (diffDays < 7) return `${diffDays}天前`;
     return timeStr;
+  };
+
+  const getPreviewText = (message: Message): string => {
+    if (message.type === 'reminder' && message.relatedId) {
+      const task = todayTasks.find(t => t.id === message.relatedId);
+      if (task) {
+        return `设备：${task.deviceName} | 位置：${task.location}`;
+      }
+    }
+    return message.content;
   };
 
   return (
@@ -83,6 +108,12 @@ const MessagePage: React.FC = () => {
 
               <Text className={styles.messageTitle}>{message.title}</Text>
               <Text className={styles.messageContent}>{message.content}</Text>
+              
+              <Text className={styles.previewText}>{getPreviewText(message)}</Text>
+              
+              <View className={styles.actionHint}>
+                <Text>点击查看详情 ›</Text>
+              </View>
             </View>
           ))
         ) : (

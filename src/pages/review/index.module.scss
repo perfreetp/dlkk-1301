@@ -73,6 +73,26 @@
       }
     }
 
+    .notesSection {
+      margin-bottom: 16rpx;
+      padding: 16rpx;
+      background: $color-bg-hover;
+      border-radius: $radius-sm;
+
+      .notesLabel {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        margin-bottom: 8rpx;
+        display: block;
+      }
+
+      .notesContent {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+        line-height: 1.6;
+      }
+    }
+
     .actionBtns {
       display: flex;
       gap: 16rpx;

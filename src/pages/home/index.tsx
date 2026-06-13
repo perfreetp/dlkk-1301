@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { todayTasks, currentUser, statistics } from '../../data/mockData';
+import { todayTasks, workOrders, currentUser } from '../../data/mockData';
 import { InspectionTask } from '../../types';
 
 const HomePage: React.FC = () => {
   const [tasks] = useState<InspectionTask[]>(todayTasks);
   const user = currentUser;
+
+  const pendingTasks = tasks.filter(t => t.status === 'pending' || t.status === 'overdue');
+  const completedTasks = tasks.filter(t => t.status === 'completed');
+  const overdueTasks = tasks.filter(t => t.status === 'overdue');
+  const pendingWorkOrders = workOrders.filter(w => w.status === 'pending' || w.status === 'assigned' || w.status === 'processing').length;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -87,22 +92,22 @@ const HomePage: React.FC = () => {
       <View className={styles.statsCard}>
         <View className={styles.statsGrid}>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{statistics.todayTasks}</Text>
-            <Text className={styles.statLabel}>今日任务</Text>
+            <Text className={styles.statValue}>{pendingTasks.length}</Text>
+            <Text className={styles.statLabel}>待巡检</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{statistics.inspectedToday}</Text>
-            <Text className={styles.statLabel}>已巡检</Text>
+            <Text className={styles.statValue}>{completedTasks.length}</Text>
+            <Text className={styles.statLabel}>已完成</Text>
           </View>
           <View className={styles.statItem}>
             <Text className={`${styles.statValue} ${styles.statValueWarning}`}>
-              {statistics.overdueTasks}
+              {overdueTasks.length}
             </Text>
             <Text className={styles.statLabel}>超时</Text>
           </View>
           <View className={styles.statItem}>
             <Text className={`${styles.statValue} ${styles.statValueDanger}`}>
-              {statistics.pendingWorkOrders}
+              {pendingWorkOrders}
             </Text>
             <Text className={styles.statLabel}>待处理工单</Text>
           </View>
@@ -152,7 +157,7 @@ const HomePage: React.FC = () => {
 
       <View className={styles.section}>
         <View className={styles.sectionHeader}>
-          <Text className={styles.sectionTitle}>今日任务</Text>
+          <Text className={styles.sectionTitle}>今日任务（{tasks.length}）</Text>
           <Button className={styles.moreBtn}>查看全部</Button>
         </View>
 

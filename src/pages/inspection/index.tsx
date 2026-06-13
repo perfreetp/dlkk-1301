@@ -3,7 +3,8 @@ import { View, Text, Input, Textarea, Image } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
 import { devices, todayTasks } from '../../data/mockData';
-import { Device, InspectionTask } from '../../types';
+import { Device, InspectionTask, InspectionRecord } from '../../types';
+import { inspectionStore } from '../../store/inspectionStore';
 
 const InspectionPage: React.FC = () => {
   const router = useRouter();
@@ -14,6 +15,7 @@ const InspectionPage: React.FC = () => {
   const [disinfectionTime, setDisinfectionTime] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [photos, setPhotos] = useState<string[]>([]);
+  const [videos, setVideos] = useState<string[]>([]);
   const [isOffline, setIsOffline] = useState<boolean>(false);
 
   useEffect(() => {
@@ -60,6 +62,10 @@ const InspectionPage: React.FC = () => {
   }, [router.params]);
 
   const handleTakePhoto = () => {
+    if (photos.length >= 3) {
+      Taro.showToast({ title: '最多上传3张照片', icon: 'none' });
+      return;
+    }
     Taro.chooseImage({
       count: 1,
       sourceType: ['camera'],
@@ -71,6 +77,10 @@ const InspectionPage: React.FC = () => {
   };
 
   const handleChooseImage = () => {
+    if (photos.length >= 3) {
+      Taro.showToast({ title: '最多上传3张照片', icon: 'none' });
+      return;
+    }
     Taro.chooseImage({
       count: 3 - photos.length,
       sourceType: ['album'],
@@ -81,9 +91,45 @@ const InspectionPage: React.FC = () => {
     });
   };
 
+  const handleTakeVideo = () => {
+    if (videos.length >= 2) {
+      Taro.showToast({ title: '最多上传2个视频', icon: 'none' });
+      return;
+    }
+    Taro.chooseVideo({
+      sourceType: ['camera'],
+      maxDuration: 60,
+      camera: 'back',
+      success: (res) => {
+        const newVideos = [...videos, res.tempFilePath];
+        setVideos(newVideos);
+      }
+    });
+  };
+
+  const handleChooseVideo = () => {
+    if (videos.length >= 2) {
+      Taro.showToast({ title: '最多上传2个视频', icon: 'none' });
+      return;
+    }
+    Taro.chooseVideo({
+      sourceType: ['album'],
+      maxDuration: 60,
+      success: (res) => {
+        const newVideos = [...videos, res.tempFilePath];
+        setVideos(newVideos);
+      }
+    });
+  };
+
   const handleDeletePhoto = (index: number) => {
     const newPhotos = photos.filter((_, i) => i !== index);
     setPhotos(newPhotos);
+  };
+
+  const handleDeleteVideo = (index: number) => {
+    const newVideos = videos.filter((_, i) => i !== index);
+    setVideos(newVideos);
   };
 
   const handleSave = () => {
@@ -111,6 +157,7 @@ const InspectionPage: React.FC = () => {
           filterStatus,
           disinfectionTime,
           photos,
+          videos,
           notes,
           savedAt: new Date().toISOString()
         });
@@ -133,21 +180,40 @@ const InspectionPage: React.FC = () => {
 
     Taro.showModal({
       title: '确认提交',
-      content: '确认提交巡检记录？提交后将无法修改。',
+      content: '确认提交巡检记录？提交后将进入待复核状态。',
       success: (res) => {
         if (res.confirm) {
           Taro.showLoading({ title: '提交中...' });
 
+          const newRecord: InspectionRecord = {
+            id: `ir${Date.now()}`,
+            deviceId: device?.id || '',
+            deviceCode: device?.code || '',
+            deviceName: device?.name || '',
+            inspector: '李师傅',
+            inspectionTime: new Date().toLocaleString('zh-CN'),
+            waterPressure: parseFloat(waterPressure),
+            filterStatus: filterStatus === 'normal' ? '正常' : '需更换',
+            disinfectionTime: disinfectionTime || new Date().toISOString().split('T')[0],
+            photos: photos,
+            videos: videos,
+            notes: notes,
+            status: 'submitted'
+          };
+
           setTimeout(() => {
+            inspectionStore.addRecord(newRecord);
+
             Taro.hideLoading();
             Taro.showToast({
               title: '提交成功',
-              icon: 'success'
+              icon: 'success',
+              duration: 2000
             });
 
             setTimeout(() => {
               Taro.navigateBack();
-            }, 1500);
+            }, 2000);
           }, 1500);
         }
       }
@@ -247,7 +313,7 @@ const InspectionPage: React.FC = () => {
       </View>
 
       <View className={styles.photoSection}>
-        <Text className={styles.sectionTitle}>现场照片</Text>
+        <Text className={styles.sectionTitle}>现场照片（{photos.length}/3）</Text>
         <View className={styles.photoGrid}>
           {photos.map((photo, index) => (
             <View key={index} className={styles.photoItem}>
@@ -269,6 +335,37 @@ const InspectionPage: React.FC = () => {
               <View className={`${styles.photoItem} ${styles.addBtn}`} onClick={handleChooseImage}>
                 <Text className={styles.addIcon}>🖼️</Text>
                 <Text className={styles.addText}>相册</Text>
+              </View>
+            </>
+          )}
+        </View>
+      </View>
+
+      <View className={styles.photoSection}>
+        <Text className={styles.sectionTitle}>现场视频（{videos.length}/2）</Text>
+        <View className={styles.photoGrid}>
+          {videos.map((video, index) => (
+            <View key={index} className={styles.photoItem}>
+              <View style={{ width: '100%', height: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: '48rpx' }}>🎬</Text>
+              </View>
+              <View
+                className={styles.deleteBtn}
+                onClick={() => handleDeleteVideo(index)}
+              >
+                ✕
+              </View>
+            </View>
+          ))}
+          {videos.length < 2 && (
+            <>
+              <View className={`${styles.photoItem} ${styles.addBtn}`} onClick={handleTakeVideo}>
+                <Text className={styles.addIcon}>🎥</Text>
+                <Text className={styles.addText}>录像</Text>
+              </View>
+              <View className={`${styles.photoItem} ${styles.addBtn}`} onClick={handleChooseVideo}>
+                <Text className={styles.addIcon}>📁</Text>
+                <Text className={styles.addText}>选择视频</Text>
               </View>
             </>
           )}

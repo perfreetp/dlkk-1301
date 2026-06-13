@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from '@tarojs/components';
+import { View, Text, ScrollView, Image, Video } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { inspectionRecords } from '../../data/mockData';
+import { inspectionStore } from '../../store/inspectionStore';
 import { InspectionRecord } from '../../types';
 
 const InspectionRecordPage: React.FC = () => {
-  const [records] = useState<InspectionRecord[]>(inspectionRecords);
+  const [records, setRecords] = useState<InspectionRecord[]>(inspectionStore.getRecords());
 
   const getStatusText = (status: string) => {
     const map: Record<string, string> = {
       draft: '草稿',
-      submitted: '已提交',
+      submitted: '待复核',
       reviewed: '已复核',
       rejected: '已驳回'
+    };
+    return map[status] || status;
+  };
+
+  const getStatusClass = (status: string) => {
+    const map: Record<string, string> = {
+      draft: 'draft',
+      submitted: 'submitted',
+      reviewed: 'reviewed',
+      rejected: 'rejected'
     };
     return map[status] || status;
   };
@@ -29,7 +39,7 @@ const InspectionRecordPage: React.FC = () => {
                   <Text className={styles.deviceName}>{record.deviceName}</Text>
                   <Text className={styles.deviceCode}>{record.deviceCode}</Text>
                 </View>
-                <Text className={`${styles.statusBadge} ${styles[record.status]}`}>
+                <Text className={`${styles.statusBadge} ${styles[getStatusClass(record.status)]}`}>
                   {getStatusText(record.status)}
                 </Text>
               </View>
@@ -48,6 +58,47 @@ const InspectionRecordPage: React.FC = () => {
                   <Text className={styles.dataValue}>{record.disinfectionTime}</Text>
                 </View>
               </View>
+
+              {(record.photos && record.photos.length > 0) && (
+                <View className={styles.mediaSection}>
+                  <Text className={styles.mediaLabel}>现场照片：</Text>
+                  <ScrollView className={styles.mediaScroll} scrollX>
+                    {record.photos.map((photo, idx) => (
+                      <Image
+                        key={idx}
+                        src={photo}
+                        className={styles.mediaItem}
+                        mode="aspectFill"
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+
+              {(record.videos && record.videos.length > 0) && (
+                <View className={styles.mediaSection}>
+                  <Text className={styles.mediaLabel}>现场视频：</Text>
+                  <ScrollView className={styles.mediaScroll} scrollX>
+                    {record.videos.map((video, idx) => (
+                      <View key={idx} className={styles.videoItem}>
+                        <Video
+                          src={video}
+                          className={styles.videoPlayer}
+                          showCenterPlayBtn
+                          showFullscreenBtn
+                        />
+                      </View>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+
+              {record.notes && (
+                <View className={styles.notesSection}>
+                  <Text className={styles.notesLabel}>备注：</Text>
+                  <Text className={styles.notesContent}>{record.notes}</Text>
+                </View>
+              )}
 
               <View className={styles.recordFooter}>
                 <Text className={styles.meta}>

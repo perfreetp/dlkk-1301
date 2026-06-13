@@ -92,6 +92,64 @@
       }
     }
 
+    .mediaSection {
+      margin-bottom: 16rpx;
+
+      .mediaLabel {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        margin-bottom: 12rpx;
+        display: block;
+      }
+
+      .mediaScroll {
+        white-space: nowrap;
+        width: 100%;
+      }
+
+      .mediaItem {
+        width: 160rpx;
+        height: 160rpx;
+        border-radius: $radius-sm;
+        margin-right: 12rpx;
+        display: inline-block;
+      }
+
+      .videoItem {
+        width: 200rpx;
+        height: 150rpx;
+        margin-right: 12rpx;
+        display: inline-block;
+        border-radius: $radius-sm;
+        overflow: hidden;
+
+        .videoPlayer {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .notesSection {
+      margin-bottom: 16rpx;
+      padding: 16rpx;
+      background: $color-bg-hover;
+      border-radius: $radius-sm;
+
+      .notesLabel {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        margin-bottom: 8rpx;
+        display: block;
+      }
+
+      .notesContent {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+        line-height: 1.6;
+      }
+    }
+
     .recordFooter {
       display: flex;
       justify-content: space-between;

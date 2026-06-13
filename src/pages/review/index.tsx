@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { inspectionRecords } from '../../data/mockData';
+import { inspectionStore } from '../../store/inspectionStore';
 import { InspectionRecord } from '../../types';
 
 const ReviewPage: React.FC = () => {
-  const [records, setRecords] = useState<InspectionRecord[]>(
-    inspectionRecords.filter(r => r.status === 'submitted')
-  );
+  const [records, setRecords] = useState<InspectionRecord[]>(inspectionStore.getPendingReviewRecords());
 
   const handleApprove = (record: InspectionRecord) => {
     Taro.showModal({
@@ -16,7 +14,8 @@ const ReviewPage: React.FC = () => {
       content: '确认通过此巡检记录？',
       success: (res) => {
         if (res.confirm) {
-          setRecords(records.filter(r => r.id !== record.id));
+          inspectionStore.updateRecord(record.id, { status: 'reviewed' });
+          setRecords(inspectionStore.getPendingReviewRecords());
           Taro.showToast({
             title: '已通过',
             icon: 'success'
@@ -32,7 +31,8 @@ const ReviewPage: React.FC = () => {
       content: '确认驳回此巡检记录？',
       success: (res) => {
         if (res.confirm) {
-          setRecords(records.filter(r => r.id !== record.id));
+          inspectionStore.updateRecord(record.id, { status: 'rejected' });
+          setRecords(inspectionStore.getPendingReviewRecords());
           Taro.showToast({
             title: '已驳回',
             icon: 'none'
@@ -72,6 +72,13 @@ const ReviewPage: React.FC = () => {
                   <Text className={styles.dataValue}>{record.disinfectionTime}</Text>
                 </View>
               </View>
+
+              {record.notes && (
+                <View className={styles.notesSection}>
+                  <Text className={styles.notesLabel}>备注：</Text>
+                  <Text className={styles.notesContent}>{record.notes}</Text>
+                </View>
+              )}
 
               <View className={styles.actionBtns}>
                 <View
