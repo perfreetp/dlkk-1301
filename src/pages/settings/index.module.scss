@@ -1,0 +1,88 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.settingList {
+  padding: 24rpx 32rpx;
+
+  .settingItem {
+    background: $color-bg-card;
+    border-radius: $radius-md;
+    padding: 32rpx;
+    margin-bottom: 16rpx;
+    box-shadow: $shadow-card;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:active {
+      background: $color-bg-hover;
+    }
+
+    .settingInfo {
+      .settingTitle {
+        font-size: $font-size-md;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+        margin-bottom: 4rpx;
+      }
+
+      .settingDesc {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+      }
+    }
+
+    .settingValue {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      display: flex;
+      align-items: center;
+
+      .arrow {
+        margin-left: 8rpx;
+        font-size: 28rpx;
+      }
+    }
+
+    .switch {
+      width: 96rpx;
+      height: 56rpx;
+      background: $color-bg-hover;
+      border-radius: 28rpx;
+      position: relative;
+      transition: all $transition-base;
+
+      &.active {
+        background: $color-primary;
+
+        &::after {
+          transform: translateX(40rpx);
+        }
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        width: 48rpx;
+        height: 48rpx;
+        background: white;
+        border-radius: 50%;
+        top: 4rpx;
+        left: 4rpx;
+        transition: transform $transition-base;
+        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+}
+
+.version {
+  text-align: center;
+  padding: 48rpx 0;
+  font-size: $font-size-sm;
+  color: $color-text-disabled;
+}

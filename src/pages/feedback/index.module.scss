@@ -1,0 +1,97 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 32rpx;
+}
+
+.feedbackList {
+  padding: 24rpx 32rpx;
+
+  .feedbackCard {
+    background: $color-bg-card;
+    border-radius: $radius-md;
+    padding: 24rpx;
+    margin-bottom: 16rpx;
+    box-shadow: $shadow-card;
+
+    .feedbackHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12rpx;
+
+      .deviceInfo {
+        flex: 1;
+
+        .deviceName {
+          font-size: $font-size-md;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
+          margin-bottom: 4rpx;
+        }
+
+        .location {
+          font-size: $font-size-sm;
+          color: $color-text-tertiary;
+        }
+      }
+
+      .typeBadge {
+        padding: 6rpx 16rpx;
+        border-radius: $radius-xs;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-medium;
+
+        &.complaint {
+          background: rgba($color-error, 0.1);
+          color: $color-error;
+        }
+
+        &.suggestion {
+          background: rgba($color-primary, 0.1);
+          color: $color-primary;
+        }
+
+        &.praise {
+          background: rgba($color-success, 0.1);
+          color: $color-success;
+        }
+      }
+    }
+
+    .feedbackContent {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: 1.6;
+      padding: 16rpx;
+      background: $color-bg-hover;
+      border-radius: $radius-sm;
+      margin-bottom: 12rpx;
+    }
+
+    .feedbackMeta {
+      display: flex;
+      justify-content: space-between;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 120rpx 0;
+
+  .emptyIcon {
+    font-size: 120rpx;
+    margin-bottom: 32rpx;
+    opacity: 0.5;
+  }
+
+  .emptyText {
+    font-size: $font-size-md;
+    color: $color-text-tertiary;
+  }
+}

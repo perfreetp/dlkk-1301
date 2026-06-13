@@ -1,0 +1,106 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 32rpx;
+}
+
+.messageList {
+  padding: 24rpx 32rpx;
+
+  .messageCard {
+    background: $color-bg-card;
+    border-radius: $radius-md;
+    padding: 24rpx;
+    margin-bottom: 16rpx;
+    box-shadow: $shadow-card;
+    position: relative;
+
+    &.unread {
+      background: linear-gradient(135deg, rgba($color-primary, 0.03) 0%, $color-bg-card 100%);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6rpx;
+        background: $color-primary;
+        border-radius: 3rpx 0 0 3rpx;
+      }
+    }
+
+    &:active {
+      opacity: 0.9;
+    }
+
+    .messageHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12rpx;
+
+      .messageType {
+        display: flex;
+        align-items: center;
+        gap: 8rpx;
+
+        .typeIcon {
+          font-size: 32rpx;
+        }
+
+        .typeName {
+          font-size: $font-size-sm;
+          color: $color-primary;
+          font-weight: $font-weight-medium;
+        }
+      }
+
+      .messageTime {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+      }
+    }
+
+    .messageTitle {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      margin-bottom: 8rpx;
+    }
+
+    .messageContent {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: 1.6;
+    }
+
+    .unreadDot {
+      position: absolute;
+      top: 24rpx;
+      right: 24rpx;
+      width: 16rpx;
+      height: 16rpx;
+      background: $color-error;
+      border-radius: 50%;
+    }
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 120rpx 0;
+
+  .emptyIcon {
+    font-size: 120rpx;
+    margin-bottom: 32rpx;
+    opacity: 0.5;
+  }
+
+  .emptyText {
+    font-size: $font-size-md;
+    color: $color-text-tertiary;
+  }
+}

@@ -1,0 +1,4 @@
+export default definePageConfig({
+  navigationBarTitleText: '巡检记录',
+  enablePullDownRefresh: true
+})

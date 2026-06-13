@@ -1,0 +1,271 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 32rpx;
+}
+
+.filterBar {
+  background: $color-bg-card;
+  padding: 24rpx 32rpx;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: $shadow-float;
+
+  .searchRow {
+    display: flex;
+    gap: 16rpx;
+    margin-bottom: 16rpx;
+
+    .searchInput {
+      flex: 1;
+      height: 72rpx;
+      background: $color-bg-hover;
+      border-radius: $radius-button;
+      padding: 0 24rpx;
+      font-size: $font-size-md;
+      display: flex;
+      align-items: center;
+
+      input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: $font-size-md;
+        outline: none;
+      }
+
+      .searchIcon {
+        margin-right: 12rpx;
+        font-size: 32rpx;
+        color: $color-text-tertiary;
+      }
+    }
+
+    .scanBtn {
+      width: 72rpx;
+      height: 72rpx;
+      background: $color-primary;
+      border-radius: $radius-button;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-text-white;
+      font-size: 32rpx;
+      padding: 0;
+
+      &::after {
+        border: none;
+      }
+    }
+  }
+
+  .filterTags {
+    display: flex;
+    gap: 16rpx;
+    overflow-x: auto;
+    padding-bottom: 8rpx;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filterTag {
+      padding: 12rpx 24rpx;
+      background: $color-bg-hover;
+      border-radius: $radius-button;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      white-space: nowrap;
+      min-width: fit-content;
+      border: none;
+
+      &.active {
+        background: rgba($color-primary, 0.1);
+        color: $color-primary;
+      }
+
+      &::after {
+        border: none;
+      }
+    }
+  }
+}
+
+.deviceList {
+  padding: 24rpx 32rpx;
+
+  .deviceCard {
+    background: $color-bg-card;
+    border-radius: $radius-md;
+    padding: 24rpx;
+    margin-bottom: 16rpx;
+    box-shadow: $shadow-card;
+
+    &:active {
+      opacity: 0.9;
+    }
+
+    .deviceHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16rpx;
+
+      .deviceInfo {
+        flex: 1;
+
+        .deviceName {
+          font-size: $font-size-md;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
+          margin-bottom: 4rpx;
+        }
+
+        .deviceCode {
+          font-size: $font-size-sm;
+          color: $color-text-tertiary;
+        }
+      }
+
+      .statusIndicator {
+        display: flex;
+        align-items: center;
+        gap: 8rpx;
+        padding: 6rpx 16rpx;
+        border-radius: $radius-xs;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-medium;
+
+        &.normal {
+          background: rgba($color-status-normal, 0.1);
+          color: $color-status-normal;
+
+          .dot {
+            background: $color-status-normal;
+          }
+        }
+
+        &.warning {
+          background: rgba($color-status-warning, 0.1);
+          color: $color-status-warning;
+
+          .dot {
+            background: $color-status-warning;
+          }
+        }
+
+        &.error {
+          background: rgba($color-status-error, 0.1);
+          color: $color-status-error;
+
+          .dot {
+            background: $color-status-error;
+          }
+        }
+
+        &.offline {
+          background: rgba($color-status-offline, 0.1);
+          color: $color-status-offline;
+
+          .dot {
+            background: $color-status-offline;
+          }
+        }
+
+        .dot {
+          width: 8rpx;
+          height: 8rpx;
+          border-radius: 50%;
+        }
+      }
+    }
+
+    .deviceInfo {
+      display: flex;
+      flex-direction: column;
+      gap: 12rpx;
+      margin-bottom: 16rpx;
+
+      .infoRow {
+        display: flex;
+        align-items: center;
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+
+        .infoLabel {
+          color: $color-text-tertiary;
+          min-width: 140rpx;
+        }
+
+        .infoValue {
+          flex: 1;
+        }
+      }
+    }
+
+    .deviceFooter {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16rpx;
+      border-top: 1rpx solid $color-divider;
+
+      .lastInspection {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+      }
+
+      .actionBtns {
+        display: flex;
+        gap: 16rpx;
+
+        .actionBtn {
+          padding: 12rpx 24rpx;
+          border-radius: $radius-button;
+          font-size: $font-size-sm;
+          font-weight: $font-weight-medium;
+          background: $color-bg-hover;
+          color: $color-text-secondary;
+          border: none;
+          min-width: 120rpx;
+          text-align: center;
+
+          &.primary {
+            background: $color-primary;
+            color: $color-text-white;
+          }
+
+          &::after {
+            border: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 120rpx 0;
+
+  .emptyIcon {
+    font-size: 120rpx;
+    margin-bottom: 32rpx;
+    opacity: 0.5;
+  }
+
+  .emptyText {
+    font-size: $font-size-md;
+    color: $color-text-tertiary;
+    margin-bottom: 16rpx;
+  }
+
+  .emptyHint {
+    font-size: $font-size-sm;
+    color: $color-text-disabled;
+  }
+}

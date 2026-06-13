@@ -1,0 +1,321 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 140rpx;
+}
+
+.deviceInfo {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+
+  .infoHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16rpx;
+
+    .deviceName {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      margin-bottom: 8rpx;
+    }
+
+    .deviceCode {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+
+    .statusBadge {
+      padding: 8rpx 20rpx;
+      border-radius: $radius-xs;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+
+      &.normal {
+        background: rgba($color-status-normal, 0.1);
+        color: $color-status-normal;
+      }
+
+      &.warning {
+        background: rgba($color-status-warning, 0.1);
+        color: $color-status-warning;
+      }
+
+      &.error {
+        background: rgba($color-status-error, 0.1);
+        color: $color-status-error;
+      }
+    }
+  }
+
+  .locationInfo {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+
+    .locationIcon {
+      margin-right: 8rpx;
+      color: $color-primary;
+    }
+  }
+}
+
+.formSection {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+
+  .sectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 24rpx;
+    display: flex;
+    align-items: center;
+
+    .required {
+      color: $color-error;
+      margin-left: 8rpx;
+    }
+  }
+
+  .formItem {
+    margin-bottom: 32rpx;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .label {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      margin-bottom: 12rpx;
+      display: flex;
+      align-items: center;
+
+      .optional {
+        color: $color-text-disabled;
+        margin-left: 8rpx;
+      }
+    }
+
+    .input {
+      width: 100%;
+      height: 88rpx;
+      background: $color-bg-hover;
+      border-radius: $radius-md;
+      padding: 0 24rpx;
+      font-size: $font-size-md;
+      border: none;
+
+      &:focus {
+        outline: 2rpx solid $color-primary;
+      }
+    }
+
+    .radioGroup {
+      display: flex;
+      gap: 24rpx;
+
+      .radioItem {
+        flex: 1;
+        height: 88rpx;
+        background: $color-bg-hover;
+        border-radius: $radius-md;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-md;
+        color: $color-text-secondary;
+        border: 4rpx solid transparent;
+        transition: all $transition-base;
+
+        &.active {
+          border-color: $color-primary;
+          background: rgba($color-primary, 0.1);
+          color: $color-primary;
+          font-weight: $font-weight-medium;
+        }
+
+        &:active {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .inputGroup {
+      display: flex;
+      align-items: center;
+
+      input {
+        flex: 1;
+        height: 88rpx;
+        background: $color-bg-hover;
+        border-radius: $radius-md 0 0 $radius-md;
+        padding: 0 24rpx;
+        font-size: $font-size-md;
+        border: none;
+
+        &:focus {
+          outline: 2rpx solid $color-primary;
+        }
+      }
+
+      .unit {
+        height: 88rpx;
+        padding: 0 24rpx;
+        background: $color-bg-hover;
+        border-radius: 0 $radius-md $radius-md 0;
+        display: flex;
+        align-items: center;
+        font-size: $font-size-md;
+        color: $color-text-tertiary;
+        border-left: 2rpx solid $color-border;
+      }
+    }
+  }
+}
+
+.photoSection {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+
+  .sectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 24rpx;
+  }
+
+  .photoGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16rpx;
+
+    .photoItem {
+      aspect-ratio: 1;
+      background: $color-bg-hover;
+      border-radius: $radius-md;
+      overflow: hidden;
+      position: relative;
+
+      image {
+        width: 100%;
+        height: 100%;
+      }
+
+      .deleteBtn {
+        position: absolute;
+        top: 8rpx;
+        right: 8rpx;
+        width: 40rpx;
+        height: 40rpx;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24rpx;
+      }
+
+      &.addBtn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 2rpx dashed $color-border;
+        background: transparent;
+
+        .addIcon {
+          font-size: 48rpx;
+          color: $color-text-tertiary;
+          margin-bottom: 8rpx;
+        }
+
+        .addText {
+          font-size: $font-size-sm;
+          color: $color-text-tertiary;
+        }
+      }
+    }
+  }
+}
+
+.notesSection {
+  background: $color-bg-card;
+  padding: 32rpx;
+
+  .sectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 24rpx;
+  }
+
+  textarea {
+    width: 100%;
+    height: 200rpx;
+    background: $color-bg-hover;
+    border-radius: $radius-md;
+    padding: 24rpx;
+    font-size: $font-size-md;
+    border: none;
+    resize: none;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: 2rpx solid $color-primary;
+    }
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 16rpx;
+
+  .btn {
+    flex: 1;
+    height: $button-height-lg;
+    border-radius: $radius-button;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+
+    &::after {
+      border: none;
+    }
+
+    &.secondary {
+      background: $color-bg-hover;
+      color: $color-text-secondary;
+    }
+
+    &.primary {
+      background: $color-primary;
+      color: $color-text-white;
+    }
+
+    &.danger {
+      background: $color-error;
+      color: $color-text-white;
+    }
+  }
+}

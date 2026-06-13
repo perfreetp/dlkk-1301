@@ -1,0 +1,168 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 32rpx;
+}
+
+.deviceHeader {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 32rpx;
+  color: $color-text-white;
+
+  .deviceName {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: 8rpx;
+  }
+
+  .deviceCode {
+    font-size: $font-size-sm;
+    opacity: 0.9;
+    margin-bottom: 16rpx;
+  }
+
+  .statusRow {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+
+    .statusBadge {
+      padding: 8rpx 20rpx;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: $radius-button;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+    }
+
+    .lastInspection {
+      font-size: $font-size-sm;
+      opacity: 0.9;
+    }
+  }
+}
+
+.infoCard {
+  background: $color-bg-card;
+  margin: 24rpx 32rpx;
+  border-radius: $radius-md;
+  padding: 24rpx;
+  box-shadow: $shadow-card;
+
+  .cardTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 20rpx;
+  }
+
+  .infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20rpx;
+
+    .infoItem {
+      .infoLabel {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+        margin-bottom: 8rpx;
+      }
+
+      .infoValue {
+        font-size: $font-size-md;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+}
+
+.statusCard {
+  background: $color-bg-card;
+  margin: 0 32rpx 24rpx;
+  border-radius: $radius-md;
+  padding: 24rpx;
+  box-shadow: $shadow-card;
+
+  .cardTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 20rpx;
+  }
+
+  .statusList {
+    .statusItem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16rpx 0;
+      border-bottom: 1rpx solid $color-divider;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .statusLabel {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+      }
+
+      .statusValue {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+
+        &.warning {
+          color: $color-warning;
+        }
+
+        &.success {
+          color: $color-success;
+        }
+
+        &.error {
+          color: $color-error;
+        }
+      }
+    }
+  }
+}
+
+.actionBtns {
+  margin: 32rpx;
+  display: flex;
+  gap: 16rpx;
+
+  .btn {
+    flex: 1;
+    height: $button-height-lg;
+    border-radius: $radius-button;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+
+    &::after {
+      border: none;
+    }
+
+    &.default {
+      background: $color-bg-hover;
+      color: $color-text-secondary;
+    }
+
+    &.primary {
+      background: $color-primary;
+      color: $color-text-white;
+    }
+
+    &.danger {
+      background: $color-error;
+      color: $color-text-white;
+    }
+  }
+}
