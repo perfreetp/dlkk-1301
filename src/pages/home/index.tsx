@@ -7,13 +7,13 @@ import { useAppState } from '../../store/AppContext';
 import { InspectionTask } from '../../types';
 
 const HomePage: React.FC = () => {
-  const { todayTasks, getUnreadMessageCount } = useAppState();
+  const { todayTasks, getPendingMessageCount, getPendingTasksCount, getTodayCompletedTasks, getOverdueTasksCount } = useAppState();
 
-  const pendingTasks = todayTasks.filter(t => t.status === 'pending' || t.status === 'overdue');
-  const completedTasks = todayTasks.filter(t => t.status === 'completed');
-  const overdueTasks = todayTasks.filter(t => t.status === 'overdue');
+  const pendingTasks = getPendingTasksCount();
+  const completedTasks = getTodayCompletedTasks();
+  const overdueTasks = getOverdueTasksCount();
   const pendingWorkOrders = workOrders.filter(w => w.status === 'pending' || w.status === 'assigned' || w.status === 'processing').length;
-  const unreadMessages = getUnreadMessageCount();
+  const unreadMessages = getPendingMessageCount();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -93,16 +93,16 @@ const HomePage: React.FC = () => {
       <View className={styles.statsCard}>
         <View className={styles.statsGrid}>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{pendingTasks.length}</Text>
+            <Text className={styles.statValue}>{pendingTasks}</Text>
             <Text className={styles.statLabel}>待巡检</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{completedTasks.length}</Text>
+            <Text className={styles.statValue}>{completedTasks}</Text>
             <Text className={styles.statLabel}>已完成</Text>
           </View>
           <View className={styles.statItem}>
             <Text className={`${styles.statValue} ${styles.statValueWarning}`}>
-              {overdueTasks.length}
+              {overdueTasks}
             </Text>
             <Text className={styles.statLabel}>超时</Text>
           </View>

@@ -52,26 +52,56 @@
       .deviceInfo {
         flex: 1;
 
-        .deviceName {
-          font-size: $font-size-md;
-          font-weight: $font-weight-semibold;
-          color: $color-text-primary;
-          margin-bottom: 4rpx;
+        .deviceNameRow {
+          display: flex;
+          align-items: center;
+          gap: 12rpx;
+          margin-bottom: 8rpx;
+
+          .deviceName {
+            font-size: $font-size-md;
+            font-weight: $font-weight-semibold;
+            color: $color-text-primary;
+          }
+
+          .offlineTag {
+            background: rgba($color-warning, 0.1);
+            padding: 4rpx 12rpx;
+            border-radius: 8rpx;
+            border: 1rpx solid rgba($color-warning, 0.2);
+
+            .offlineTagText {
+              font-size: 20rpx;
+              color: $color-warning;
+              font-weight: $font-weight-medium;
+            }
+          }
+        }
+
+        .deviceCode {
+          font-size: $font-size-sm;
+          color: $color-text-tertiary;
+          margin-bottom: 8rpx;
+        }
+
+        .warningTag {
+          background: rgba($color-error, 0.1);
+          padding: 4rpx 12rpx;
+          border-radius: 8rpx;
+          margin-bottom: 8rpx;
+          border: 1rpx solid rgba($color-error, 0.2);
+
+          .warningTagText {
+            font-size: 20rpx;
+            color: $color-error;
+            font-weight: $font-weight-medium;
+          }
         }
 
         .saveTime {
           font-size: $font-size-sm;
           color: $color-text-tertiary;
         }
-      }
-
-      .statusBadge {
-        padding: 6rpx 16rpx;
-        border-radius: $radius-xs;
-        font-size: $font-size-xs;
-        font-weight: $font-weight-medium;
-        background: rgba($color-warning, 0.1);
-        color: $color-warning;
       }
     }
 
@@ -129,7 +159,7 @@
 
     .actionBtns {
       display: flex;
-      gap: 16rpx;
+      gap: 12rpx;
       padding-top: 16rpx;
       border-top: 1rpx solid $color-divider;
 
@@ -148,14 +178,24 @@
           border: none;
         }
 
+        &.edit {
+          background: rgba($color-primary, 0.1);
+          color: $color-primary;
+        }
+
         &.delete {
-          background: $color-bg-hover;
+          background: rgba($color-error, 0.1);
           color: $color-error;
         }
 
         &.submit {
           background: $color-primary;
           color: $color-text-white;
+        }
+
+        &.disabled {
+          background: $color-bg-hover;
+          color: $color-text-disabled;
         }
       }
     }
@@ -198,6 +238,14 @@
 
     .statusIcon {
       margin-right: 8rpx;
+    }
+  }
+
+  &.online {
+    background: rgba($color-success, 0.1);
+
+    .statusText {
+      color: $color-success;
     }
   }
 

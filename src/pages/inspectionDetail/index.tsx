@@ -29,7 +29,7 @@ const InspectionDetailPage: React.FC = () => {
     const map: Record<string, string> = {
       draft: '草稿',
       submitted: '待复核',
-      reviewed: '已复核',
+      reviewed: '已通过',
       rejected: '已驳回'
     };
     return map[status] || status;
@@ -43,6 +43,14 @@ const InspectionDetailPage: React.FC = () => {
       rejected: 'rejected'
     };
     return map[status] || status;
+  };
+
+  const handleEdit = () => {
+    if (record && record.status === 'rejected') {
+      Taro.navigateTo({
+        url: `/pages/inspectionEdit/index?recordId=${record.id}`
+      });
+    }
   };
 
   if (!record) {
@@ -162,14 +170,36 @@ const InspectionDetailPage: React.FC = () => {
         </View>
       )}
 
+      {record.reviewHistory && record.reviewHistory.length > 0 && (
+        <View className={styles.historyCard}>
+          <Text className={styles.cardTitle}>
+            <Text className={styles.titleIcon}>📜</Text>
+            复核历史
+          </Text>
+          {record.reviewHistory.map((item: any, index: number) => (
+            <View key={index} className={styles.historyItem}>
+              <View className={styles.historyHeader}>
+                <Text className={styles.historyTime}>{item.time}</Text>
+                <Text className={`${styles.historyStatus} ${
+                  item.status === 'reviewed' ? styles.approved : styles.rejected
+                }`}>
+                  {item.status === 'reviewed' ? '通过' : '驳回'}
+                </Text>
+              </View>
+              <Text className={styles.historyComment}>{item.comment}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
       {(record.status === 'reviewed' || record.status === 'rejected') && (
-        <View className={`${styles.reviewCard} ${styles[record.status === 'reviewed' ? 'approved' : 'rejected']}`}>
+        <View className={styles.reviewCard}>
           <Text className={styles.cardTitle}>
             <Text className={styles.titleIcon}>✅</Text>
-            复核结果
+            最新复核结果
           </Text>
           <View className={styles.reviewStatus}>
-            <Text className={`${styles.statusBadge} ${styles[record.status === 'reviewed' ? 'approved' : 'rejected']}`}>
+            <Text className={`${styles.statusBadge} ${styles[record.status === 'reviewed' ? 'reviewed' : 'rejected']}`}>
               {record.status === 'reviewed' ? '已通过' : '已驳回'}
             </Text>
             <Text className={styles.reviewerInfo}>
@@ -187,18 +217,34 @@ const InspectionDetailPage: React.FC = () => {
 
       {record.status === 'rejected' && (
         <View style={{ padding: '0 32rpx 32rpx' }}>
-          <View style={{
-            background: 'rgba(255, 125, 0, 0.1)',
-            borderRadius: '12rpx',
-            padding: '24rpx',
-            borderLeft: '6rpx solid #ff7d00'
-          }}>
+          <View 
+            style={{
+              background: 'linear-gradient(135deg, rgba(255, 125, 0, 0.1) 0%, rgba(255, 125, 0, 0.05) 100%)',
+              borderRadius: '12rpx',
+              padding: '24rpx',
+              border: '1rpx solid rgba(255, 125, 0, 0.2)'
+            }}
+          >
             <Text style={{ fontSize: '28rpx', color: '#ff7d00', fontWeight: 'bold', display: 'block', marginBottom: '12rpx' }}>
-              💡 请根据复核意见修改后重新提交
+              💡 根据复核意见修改后重新提交
             </Text>
-            <Text style={{ fontSize: '24rpx', color: '#666', lineHeight: '1.6' }}>
-              被驳回的记录可以点击"编辑重新提交"按钮进行修改
+            <Text style={{ fontSize: '24rpx', color: '#666', lineHeight: '1.6', display: 'block', marginBottom: '16rpx' }}>
+              上方已显示驳回原因，请点击下方按钮修改巡检数据后重新提交
             </Text>
+            <View 
+              onClick={handleEdit}
+              style={{
+                background: '#ff7d00',
+                color: '#fff',
+                padding: '20rpx',
+                borderRadius: '48rpx',
+                textAlign: 'center',
+                fontSize: '28rpx',
+                fontWeight: 'bold'
+              }}
+            >
+              编辑并重新提交
+            </View>
           </View>
         </View>
       )}

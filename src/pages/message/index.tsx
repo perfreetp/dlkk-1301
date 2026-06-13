@@ -1,12 +1,16 @@
-import React from 'react';
-import { View, Text, ScrollView } from '@tarojs/components';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import { useAppState } from '../../store/AppContext';
 import { todayTasks, devices } from '../../data/mockData';
 
 const MessagePage: React.FC = () => {
-  const { messages, markMessageAsRead } = useAppState();
+  const { messages, markMessageAsRead, markMessageAsProcessed } = useAppState();
+  const [activeTab, setActiveTab] = useState<string>('pending');
+
+  const pendingMessages = messages.filter(msg => !msg.isProcessed);
+  const processedMessages = messages.filter(msg => msg.isProcessed);
 
   const getTypeIcon = (type: string) => {
     const icons: Record<string, string> = {
@@ -34,27 +38,51 @@ const MessagePage: React.FC = () => {
     }
 
     if (message.type === 'dispatch' && message.relatedId) {
-      Taro.navigateTo({
-        url: `/pages/workorderDetail/index?orderId=${message.relatedId}`
+      Taro.showToast({
+        title: '正在处理...',
+        icon: 'loading',
+        duration: 500
       });
-    } else if (message.type === 'reminder' && message.relatedId) {
-      const task = todayTasks.find(t => t.id === message.relatedId);
-      if (task) {
+      setTimeout(() => {
+        markMessageAsProcessed(message.id);
         Taro.navigateTo({
-          url: `/pages/inspection/index?taskId=${task.id}&deviceId=${task.deviceId}`
+          url: `/pages/workorderDetail/index?orderId=${message.relatedId}`
         });
-      } else {
-        const device = devices.find(d => d.id === message.relatedId);
-        if (device) {
-          Taro.navigateTo({
-            url: `/pages/deviceDetail/index?deviceId=${device.id}`
-          });
-        }
-      }
-    } else if (message.type === 'review') {
-      Taro.navigateTo({
-        url: '/pages/review/index'
+      }, 600);
+    } else if (message.type === 'reminder' && message.relatedId) {
+      Taro.showToast({
+        title: '正在处理...',
+        icon: 'loading',
+        duration: 500
       });
+      setTimeout(() => {
+        markMessageAsProcessed(message.id);
+        const task = todayTasks.find(t => t.id === message.relatedId);
+        if (task) {
+          Taro.navigateTo({
+            url: `/pages/inspection/index?taskId=${task.id}&deviceId=${task.deviceId}`
+          });
+        } else {
+          const device = devices.find(d => d.id === message.relatedId);
+          if (device) {
+            Taro.navigateTo({
+              url: `/pages/deviceDetail/index?deviceId=${device.id}`
+            });
+          }
+        }
+      }, 600);
+    } else if (message.type === 'review') {
+      Taro.showToast({
+        title: '正在处理...',
+        icon: 'loading',
+        duration: 500
+      });
+      setTimeout(() => {
+        markMessageAsProcessed(message.id);
+        Taro.navigateTo({
+          url: '/pages/review/index'
+        });
+      }, 600);
     } else if (message.type === 'system') {
       Taro.showModal({
         title: '系统公告',
@@ -93,14 +121,56 @@ const MessagePage: React.FC = () => {
     return message.content;
   };
 
+  const getProcessedStatus = (message: any): string => {
+    if (message.type === 'dispatch' && message.relatedId) {
+      return '已处理：查看工单';
+    }
+    if (message.type === 'reminder') {
+      return '已处理：任务已查看';
+    }
+    if (message.type === 'review') {
+      return '已处理：进入复核';
+    }
+    return '已读';
+  };
+
+  const displayedMessages = activeTab === 'pending' ? pendingMessages : processedMessages;
+
   return (
     <View className={styles.container}>
+      <View className={styles.filterTabs}>
+        <View className={styles.tabList}>
+          <Button
+            className={`${styles.tab} ${activeTab === 'pending' ? styles.active : ''}`}
+            onClick={() => setActiveTab('pending')}
+          >
+            待处理
+            {pendingMessages.length > 0 && (
+              <View className={styles.tabBadge}>
+                <Text className={styles.badgeText}>{pendingMessages.length}</Text>
+              </View>
+            )}
+          </Button>
+          <Button
+            className={`${styles.tab} ${activeTab === 'processed' ? styles.active : ''}`}
+            onClick={() => setActiveTab('processed')}
+          >
+            已处理
+            {processedMessages.length > 0 && (
+              <View className={styles.tabBadgeGray}>
+                <Text className={styles.badgeTextGray}>{processedMessages.length}</Text>
+              </View>
+            )}
+          </Button>
+        </View>
+      </View>
+
       <ScrollView className={styles.messageList} scrollY>
-        {messages.length > 0 ? (
-          messages.map((message) => (
+        {displayedMessages.length > 0 ? (
+          displayedMessages.map((message) => (
             <View
               key={message.id}
-              className={`${styles.messageCard} ${!message.isRead ? styles.unread : ''}`}
+              className={`${styles.messageCard} ${!message.isRead ? styles.unread : ''} ${message.isProcessed ? styles.processed : ''}`}
               onClick={() => handleMessageClick(message)}
             >
               {!message.isRead && <View className={styles.unreadDot} />}
@@ -118,15 +188,28 @@ const MessagePage: React.FC = () => {
               
               <Text className={styles.previewText}>{getPreviewText(message)}</Text>
               
-              <View className={styles.actionHint}>
-                <Text>点击查看详情 ›</Text>
-              </View>
+              {message.isProcessed && (
+                <View className={styles.processedStatus}>
+                  <Text className={styles.processedIcon}>✓</Text>
+                  <Text className={styles.processedText}>{getProcessedStatus(message)}</Text>
+                </View>
+              )}
+              
+              {!message.isProcessed && (
+                <View className={styles.actionHint}>
+                  <Text>点击处理 ›</Text>
+                </View>
+              )}
             </View>
           ))
         ) : (
           <View className={styles.emptyState}>
-            <Text className={styles.emptyIcon}>📭</Text>
-            <Text className={styles.emptyText}>暂无消息</Text>
+            <Text className={styles.emptyIcon}>
+              {activeTab === 'pending' ? '✅' : '📭'}
+            </Text>
+            <Text className={styles.emptyText}>
+              {activeTab === 'pending' ? '暂无待处理消息' : '暂无已处理消息'}
+            </Text>
           </View>
         )}
       </ScrollView>

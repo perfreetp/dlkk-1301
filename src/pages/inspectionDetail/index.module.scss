@@ -17,7 +17,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20rpx;
 
     .statusBadge {
       padding: 8rpx 20rpx;
@@ -178,18 +177,6 @@
   }
 
   .mediaSection {
-    margin-bottom: 20rpx;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .sectionLabel {
-      font-size: $font-size-sm;
-      color: $color-text-secondary;
-      margin-bottom: 12rpx;
-    }
-
     .photoGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -245,20 +232,75 @@
   }
 }
 
-.reviewCard {
+.historyCard {
   background: $color-bg-card;
   margin: 0 32rpx 16rpx;
   border-radius: $radius-md;
   padding: 24rpx;
   box-shadow: $shadow-card;
 
-  &.approved {
-    border-left: 6rpx solid $color-success;
+  .cardTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 20rpx;
+    display: flex;
+    align-items: center;
+
+    .titleIcon {
+      margin-right: 8rpx;
+    }
   }
 
-  &.rejected {
-    border-left: 6rpx solid $color-error;
+  .historyItem {
+    background: $color-bg-hover;
+    padding: 16rpx;
+    border-radius: $radius-sm;
+    margin-bottom: 12rpx;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .historyHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8rpx;
+
+      .historyTime {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+      }
+
+      .historyStatus {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+
+        &.approved {
+          color: $color-success;
+        }
+
+        &.rejected {
+          color: $color-error;
+        }
+      }
+    }
+
+    .historyComment {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: 1.6;
+    }
   }
+}
+
+.reviewCard {
+  background: $color-bg-card;
+  margin: 0 32rpx 16rpx;
+  border-radius: $radius-md;
+  padding: 24rpx;
+  box-shadow: $shadow-card;
 
   .cardTitle {
     font-size: $font-size-md;
@@ -284,7 +326,7 @@
       font-size: $font-size-sm;
       font-weight: $font-weight-medium;
 
-      &.approved {
+      &.reviewed {
         background: rgba($color-success, 0.1);
         color: $color-success;
       }

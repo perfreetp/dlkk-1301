@@ -11,6 +11,7 @@ export default defineAppConfig({
     'pages/deviceDetail/index',
     'pages/inspectionRecord/index',
     'pages/inspectionDetail/index',
+    'pages/inspectionEdit/index',
     'pages/workorderDetail/index',
     'pages/emergency/index',
     'pages/review/index',

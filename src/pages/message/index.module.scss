@@ -6,6 +6,93 @@
   padding-bottom: 32rpx;
 }
 
+.filterTabs {
+  background: $color-bg-card;
+  padding: 0 32rpx;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: $shadow-float;
+
+  .tabList {
+    display: flex;
+    gap: 8rpx;
+
+    .tab {
+      flex: 1;
+      height: 88rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-md;
+      color: $color-text-tertiary;
+      position: relative;
+      background: transparent;
+      border: none;
+      padding: 0;
+
+      &::after {
+        border: none;
+      }
+
+      &.active {
+        color: $color-primary;
+        font-weight: $font-weight-semibold;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 48rpx;
+          height: 6rpx;
+          background: $color-primary;
+          border-radius: 3rpx;
+        }
+      }
+    }
+
+    .tabBadge {
+      min-width: 32rpx;
+      height: 32rpx;
+      background: $color-error;
+      color: $color-text-white;
+      border-radius: 16rpx;
+      font-size: 20rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8rpx;
+      padding: 0 8rpx;
+
+      .badgeText {
+        font-size: 20rpx;
+        font-weight: $font-weight-bold;
+      }
+    }
+
+    .tabBadgeGray {
+      min-width: 32rpx;
+      height: 32rpx;
+      background: $color-text-tertiary;
+      color: $color-text-white;
+      border-radius: 16rpx;
+      font-size: 20rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8rpx;
+      padding: 0 8rpx;
+
+      .badgeTextGray {
+        font-size: 20rpx;
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+}
+
 .messageList {
   padding: 24rpx 32rpx;
 
@@ -30,6 +117,10 @@
         background: $color-primary;
         border-radius: 3rpx 0 0 3rpx;
       }
+    }
+
+    &.processed {
+      opacity: 0.7;
     }
 
     &:active {
@@ -88,12 +179,31 @@
       line-height: 1.5;
     }
 
+    .processedStatus {
+      display: flex;
+      align-items: center;
+      padding-top: 12rpx;
+      border-top: 1rpx solid $color-divider;
+
+      .processedIcon {
+        color: $color-success;
+        font-size: 24rpx;
+        margin-right: 8rpx;
+      }
+
+      .processedText {
+        font-size: $font-size-sm;
+        color: $color-success;
+      }
+    }
+
     .actionHint {
       font-size: $font-size-sm;
-      color: $color-text-tertiary;
+      color: $color-primary;
       text-align: right;
       padding-top: 8rpx;
       border-top: 1rpx solid $color-divider;
+      font-weight: $font-weight-medium;
     }
 
     .unreadDot {

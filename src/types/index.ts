@@ -94,7 +94,16 @@ export interface Message {
   relatedId?: string; // 相关工单或设备ID
   relatedType?: 'workorder' | 'device' | 'inspection';
   isRead: boolean;
+  isProcessed?: boolean; // 是否已处理
+  processedTime?: string; // 处理时间
   createTime: string;
+}
+
+// 复核历史
+export interface ReviewHistory {
+  time: string;
+  status: string;
+  comment: string;
 }
 
 // 巡检记录
@@ -112,7 +121,11 @@ export interface InspectionRecord {
   videos: string[];
   notes: string;
   status: 'draft' | 'submitted' | 'reviewed' | 'rejected';
-  reviewComment?: string;
+  taskId?: string; // 关联的任务ID
+  reviewComment?: string; // 最新复核意见
+  reviewTime?: string; // 复核时间
+  lastEditTime?: string; // 最后编辑时间
+  reviewHistory?: ReviewHistory[]; // 复核历史
 }
 
 // 用户信息

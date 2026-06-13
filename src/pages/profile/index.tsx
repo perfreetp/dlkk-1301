@@ -6,12 +6,12 @@ import { workOrders } from '../../data/mockData';
 import { useAppState } from '../../store/AppContext';
 
 const ProfilePage: React.FC = () => {
-  const { todayTasks, getUnreadMessageCount, getPendingReviewCount } = useAppState();
+  const { getPendingMessageCount, getPendingTasksCount, getTodayCompletedTasks, getOverdueTasksCount, getPendingReviewCount } = useAppState();
 
-  const pendingTasks = todayTasks.filter(t => t.status === 'pending' || t.status === 'overdue').length;
-  const completedTasks = todayTasks.filter(t => t.status === 'completed').length;
-  const overdueTasks = todayTasks.filter(t => t.status === 'overdue').length;
-  const unreadMessages = getUnreadMessageCount();
+  const pendingTasks = getPendingTasksCount();
+  const completedTasks = getTodayCompletedTasks();
+  const overdueTasks = getOverdueTasksCount();
+  const unreadMessages = getPendingMessageCount();
   const pendingWorkOrders = workOrders.filter(w => w.status === 'pending' || w.status === 'assigned' || w.status === 'processing').length;
   const pendingReview = getPendingReviewCount();
 

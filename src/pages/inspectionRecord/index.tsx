@@ -5,13 +5,13 @@ import styles from './index.module.scss';
 import { useAppState } from '../../store/AppContext';
 
 const InspectionRecordPage: React.FC = () => {
-  const { inspectionRecords } = useAppState();
+  const { inspectionRecords, version } = useAppState();
 
   const getStatusText = (status: string) => {
     const map: Record<string, string> = {
       draft: '草稿',
       submitted: '待复核',
-      reviewed: '已复核',
+      reviewed: '已通过',
       rejected: '已驳回'
     };
     return map[status] || status;
@@ -33,13 +33,32 @@ const InspectionRecordPage: React.FC = () => {
     });
   };
 
+  const handleQuickEdit = (recordId: string, e: any) => {
+    e.stopPropagation();
+    Taro.navigateTo({
+      url: `/pages/inspectionEdit/index?recordId=${recordId}`
+    });
+  };
+
+  const formatTime = (timeStr: string) => {
+    const date = new Date(timeStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+    if (diffHours < 1) return '刚刚';
+    if (diffHours < 24) return `${diffHours}小时前`;
+    if (diffHours < 48) return '昨天';
+    return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+  };
+
   return (
     <View className={styles.container}>
       <ScrollView className={styles.recordList} scrollY>
         {inspectionRecords.length > 0 ? (
           inspectionRecords.map((record) => (
-            <View 
-              key={record.id} 
+            <View
+              key={record.id}
               className={styles.recordCard}
               onClick={() => handleRecordClick(record.id)}
             >
@@ -48,10 +67,48 @@ const InspectionRecordPage: React.FC = () => {
                   <Text className={styles.deviceName}>{record.deviceName}</Text>
                   <Text className={styles.deviceCode}>{record.deviceCode}</Text>
                 </View>
-                <Text className={`${styles.statusBadge} ${styles[getStatusClass(record.status)]}`}>
-                  {getStatusText(record.status)}
-                </Text>
+                <View className={styles.statusWrapper}>
+                  <Text className={`${styles.statusBadge} ${styles[getStatusClass(record.status)]}`}>
+                    {getStatusText(record.status)}
+                  </Text>
+                  {record.status === 'rejected' && (
+                    <View
+                      className={styles.quickEditBtn}
+                      onClick={(e) => handleQuickEdit(record.id, e)}
+                    >
+                      重新编辑
+                    </View>
+                  )}
+                </View>
               </View>
+
+              {record.status === 'rejected' && record.reviewComment && (
+                <View className={styles.rejectBanner}>
+                  <Text className={styles.rejectIcon}>⚠️</Text>
+                  <View className={styles.rejectContent}>
+                    <Text className={styles.rejectLabel}>被驳回原因：</Text>
+                    <Text className={styles.rejectText}>{record.reviewComment}</Text>
+                  </View>
+                </View>
+              )}
+
+              {record.status === 'reviewed' && (
+                <View className={styles.approvedBanner}>
+                  <Text className={styles.approvedIcon}>✅</Text>
+                  <Text className={styles.approvedText}>
+                    已通过复核 {record.reviewTime ? `@ ${formatTime(record.reviewTime)}` : ''}
+                  </Text>
+                </View>
+              )}
+
+              {record.status === 'submitted' && (
+                <View className={styles.pendingBanner}>
+                  <Text className={styles.pendingIcon}>⏳</Text>
+                  <Text className={styles.pendingText}>
+                    等待主管复核中 {record.reviewHistory && record.reviewHistory.length > 0 ? `(第${record.reviewHistory.length + 1}次提交)` : '(首次提交)'}
+                  </Text>
+                </View>
+              )}
 
               <View className={styles.recordData}>
                 <View className={styles.dataItem}>
@@ -113,7 +170,9 @@ const InspectionRecordPage: React.FC = () => {
                 <Text className={styles.meta}>
                   巡检员：{record.inspector} | {record.inspectionTime}
                 </Text>
-                <View className={styles.actionBtn}>查看详情 ›</View>
+                <View className={styles.actionBtn}>
+                  {record.status === 'rejected' ? '编辑并重提 ›' : '查看详情 ›'}
+                </View>
               </View>
             </View>
           ))
